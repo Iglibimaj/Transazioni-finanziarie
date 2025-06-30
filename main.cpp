@@ -1,15 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <ostream>
 #include <fstream>
 
 class CC {
 public:
-
-    CC(std::string& Iban, const std::string &Cognome, const std::string &Nome, float Valore) {
-        ContoCorrente.insert({Iban, {Cognome, Nome, Valore}});
-    }
     struct AccountInfo {
         std::string Cognome;
         std::string Nome;
@@ -19,85 +14,86 @@ public:
     };
 
     std::map<std::string, AccountInfo> ContoCorrente;
-    int transazioniCounterEntrata = 0;
-    int transazioneCounterUscita = 0;
 
+    CC(const std::string& Iban, const std::string& Cognome, const std::string& Nome, float Valore) {
+        ContoCorrente.insert({Iban, {Cognome, Nome, Valore}});
+    }
 
-    void bonificoEntrata(std::string &Iban, float valore) {
+    void bonificoEntrata(const std::string& Iban, float valore) {
         auto it = ContoCorrente.find(Iban);
         if (it != ContoCorrente.end()) {
             it->second.Valore += valore;
             it->second.fileEntrate.emplace_back(Iban, valore);
-            transazioniCounterEntrata++;
-            std::cout << "";
+        } else {
+            std::cerr << "Errore: IBAN non trovato per bonifico di entrata.\n";
         }
     }
 
-    void bonifocoUscita(std::string &Iban, float valore) {
+    void bonificoUscita(const std::string& Iban, float valore) {
         auto it = ContoCorrente.find(Iban);
         if (it != ContoCorrente.end()) {
             it->second.Valore -= valore;
             it->second.fileUscite.emplace_back(Iban, valore);
-            transazioneCounterUscita++;
+        } else {
+            std::cerr << "Errore: IBAN non trovato per bonifico di uscita.\n";
         }
     }
 
-    void searchIban(std::string &Iban) {
+    void searchIban(const std::string& Iban) const {
         auto it = ContoCorrente.find(Iban);
         if (it != ContoCorrente.end()) {
-            const auto &account = it->second;
+            const auto& account = it->second;
             std::cout << "Il conto corrente del signor/a " << account.Cognome << " " << account.Nome
                       << " in questo momento ha " << account.Valore << " euro.\n";
+        } else {
+            std::cout << "IBAN non trovato.\n";
         }
-    };
+    }
 
-    void leggiEntrate(std::string &Iban) {
+    void leggiEntrate(const std::string& Iban) const {
         auto it = ContoCorrente.find(Iban);
         if (it != ContoCorrente.end()) {
-            const auto &account = it->second;
+            const auto& account = it->second;
             std::cout << "Entrate per il conto " << Iban << ":\n";
-            for (const auto &entrate: account.fileEntrate) {
-                std::cout << "Transazione n." << entrate.first << ": " << entrate.second << " euro\n";
+            for (const auto& entrate : account.fileEntrate) {
+                std::cout << "IBAN: " << entrate.first << ", Valore: " << entrate.second << " euro\n";
             }
         } else {
             std::cout << "Conto non trovato.\n";
         }
     }
 
-    void leggiUscite(std::string &Iban) {
+    void leggiUscite(const std::string& Iban) const {
         auto it = ContoCorrente.find(Iban);
         if (it != ContoCorrente.end()) {
-            const auto &account = it->second;
-            std::cout << "Uscite per il cont " << Iban << "\n";
-            for (const auto &uscite: account.fileUscite) {
-                std::cout << "Transazione #" << uscite.first << ": " << uscite.second << " euro\n";
+            const auto& account = it->second;
+            std::cout << "Uscite per il conto " << Iban << ":\n";
+            for (const auto& uscite : account.fileUscite) {
+                std::cout << "IBAN: " << uscite.first << ", Valore: " << uscite.second << " euro\n";
             }
         } else {
             std::cout << "Conto non trovato.\n";
         }
     }
 
-    void saveinFile(std::string &nomeFile) {
+    void saveinFile(const std::string& nomeFile) const {
         std::ofstream outFile(nomeFile);
         if (!outFile) {
-            std::cerr << "Errore nell'aprire il file" << std::endl;
+            std::cerr << "Errore nell'aprire il file.\n";
             return;
         }
-        for (const auto &item: ContoCorrente) {
+        for (const auto& item : ContoCorrente) {
             outFile << item.first << ":"
                     << item.second.Cognome << " "
                     << item.second.Nome << " "
-                    << item.second.Valore << std::endl;
+                    << item.second.Valore << "\n";
+        }
+        if (!outFile.good()) {
+            std::cerr << "Errore durante la scrittura del file.\n";
         }
     }
-
-
 };
 
-
-int main() {
-    //Classi che rappresentano transazioni finanziarie su un conto corrente(ingresso e uscita).
-    //Le classi devono essere in grado di leggere e salvare i dati su file.
+int main(){
     return 0;
 }
-
