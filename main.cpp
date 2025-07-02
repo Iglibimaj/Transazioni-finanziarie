@@ -32,7 +32,7 @@ public:
         std::vector<std::pair<std::string, float>> fileUscite;
     };
 
-    std::map<std::string, AccountInfo> ContoCorrente;
+    static std::map<std::string, AccountInfo> ContoCorrente;
 
     CC(std::string iban, const Cliente &cliente, float valore)
             : Iban(std::move(iban)), Cognome(cliente.Cognome), Nome(cliente.Nome), CF(cliente.CF) {
@@ -128,23 +128,38 @@ public:
             return;
         }
         for (const auto &item: ContoCorrente) {
-            outFile << item.first << ":"
-                    << item.second.Cognome << " "
-                    << item.second.Nome << " "
-                    << item.second.Valore << "\n";
+            outFile << item.first << "" << item.second.Cognome << " " << item.second.Nome << " " << item.second.Valore << "\n";
+        }
+    }
+    void readFile(const std::string &nomeFile){
+        std::ifstream inFile(nomeFile);
+        if (!inFile) {
+            std::cerr << "Errore nell'aprire il file per la lettura.\n";
+            return;
+        }
+        CC::ContoCorrente.clear();
+        std::string iban, cognome, nome;
+        float valore;
+        while (inFile >> iban >> cognome >> nome >> valore) {
+            CC::ContoCorrente[iban] = {cognome, nome, valore};
         }
     }
 };
 
+
+
+std::map<std::string, CC::AccountInfo> CC::ContoCorrente;
+
 int main() {
     Cliente cliente("Bimaj","Igli","BMJGLI32F34F534A");
     CC cc("12fe534",cliente,0);
+    Cliente cliente1("dds","adsa","asd");
+    CC cc2("qwe",cliente1,0);
+    cc2.bonificoEntrata("qwe",15);
     cc.bonificoEntrata("12fe534",500);
     cc.bonificoEntrata("12fe534",1500);
-    cc.searchIban("12fe534");
-    cc.leggiEntrate("12fe534");
     cc.bonificoUscita("12fe534",500);
-    cc.leggiUscite("12fe534");
-    cc.searchIban("12fe534");
+    cc.saveinFile("C://Users//bimaj//CLionProjects//Transazioni_finanziarie//saveFile//save1.txt");
+    cc.readFile("C://Users//bimaj//CLionProjects//Transazioni_finanziarie//saveFile//save1.txt");
     return 0;
 }
