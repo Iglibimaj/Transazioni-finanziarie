@@ -1,7 +1,3 @@
-//
-// Created by bimaj on 03/07/2025.
-//
-
 #ifndef TRANSAZIONI_FINANZIARIE_CC_H
 #define TRANSAZIONI_FINANZIARIE_CC_H
 
@@ -9,28 +5,26 @@
 #include "Client.h"
 #include "map"
 #include "vector"
+
 class CC {
 public:
-
     struct ClientInfo {
         std::string Cognome;
         std::string Nome;
         std::string CF;
     };
 
-    static std::map<std::string,std::pair<ClientInfo,float>> ContoCorrente;
-    static std::vector<std::pair<std::string, float>> fileEntrate;
-    static std::vector<std::pair<std::string, float>> fileUscite;
+    static std::map<std::string, std::pair<ClientInfo, float>> ContoCorrente;
 
-    CC(std::string iban, const Cliente &cliente, float saldo);
+    CC(const std::string& iban, const Cliente& cliente, float saldo);
 
-    static void searchIban(const std::string &iban);
-    static void bonificoEntrata(const std::string &iban, float valore);
-    static void bonificoUscita(const std::string &iban, float valore);
-    static void leggiEntrate(const std::string &iban);
-    static void leggiUscite(const std::string &iban);
-    static void saveinFile(const std::string &nomeFile);
-    static void readFile(const std::string &nomeFile);
+    static void searchIban(const std::string& iban) ;
+    void bonificoEntrata(float valore);
+    void bonificoUscita(float valore);
+    void leggiEntrate() const;
+    void leggiUscite() const;
+    static void saveinFile(const std::string& nomeFile) ;
+    static void readFile(const std::string& nomeFile) ;
 
 private:
     std::string Iban;
@@ -38,7 +32,8 @@ private:
     std::string Nome;
     std::string CF;
     float Saldo;
+    std::vector<std::pair<std::string, float>> fileEntrate;
+    std::vector<std::pair<std::string, float>> fileUscite;
 };
-
 
 #endif //TRANSAZIONI_FINANZIARIE_CC_H
