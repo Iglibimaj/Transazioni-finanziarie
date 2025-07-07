@@ -55,20 +55,20 @@ void CC::bonificoEntrata(const std::string &iban, float valore) {
         fileEntrate[iban].emplace_back(valore);
         nEntrate[iban]++;
     } else {
-        std::cerr << "Bonifico non possibile: IBAN " << iban << " non trovato per bonifico in entrata.\n";
+        std::cerr << "Bonifico non possibile, IBAN " << iban << " non trovato per bonifico in entrata.\n";
     }
 }
 
 void CC::bonificoUscita(const std::string &iban, float valore) {
     if (valore <= 0) {
-        std::cerr << "Bonifico non possibile: il bonifico in uscita non può essere negativo o uguale a zero\n";
+        std::cerr << "Bonifico in uscita non possibile per il conto con IBAN "<<iban<<": il bonifico in uscita non può essere negativo o uguale a zero\n";
         return;
     }
     auto it = ContoCorrente.find(iban);
     if (it != ContoCorrente.end()) {
         auto &account = it->second;
         if (account.second - valore < 0) {
-            std::cerr << "Bonifico non possibile: il conto andrebbe in negativo\n";
+            std::cerr << "Bonifico in uscita non possibile per il conto con IBAN "<<iban <<": il conto andrebbe in negativo\n";
             return;
         }
         account.second -= valore;
@@ -88,7 +88,7 @@ void CC::leggiEntrate(const std::string &iban) {
         }
         std::cout << "\n";
     } else {
-        std::cerr << "Errore: IBAN " << iban << " non trovato per leggere le entrate.\n";
+        std::cerr << "Impossibile ottenere le entrate: IBAN " << iban << " non trovato per leggere le entrate.\n";
     }
 }
 
@@ -101,7 +101,7 @@ void CC::leggiUscite(const std::string &iban) {
         }
         std::cout << "\n";
     } else {
-        std::cerr << "Errore: IBAN " << iban << " non trovato per leggere le uscite.\n";
+        std::cerr << "Impossibile lggere le uscite: IBAN " << iban << " non trovato per leggere le uscite.\n";
     }
 }
 
@@ -153,27 +153,27 @@ float CC::getSaldo(const std::string &iban) {
     if (it != ContoCorrente.end()) {
         return it->second.second;
     }
-    std::cerr << "iban " << iban << " trovato";
+    std::cerr << "Lettura saldo non possibile: IBAN " << iban << " non esistente.\n";
     return 0;
 }
 
 int CC::getNuscite(const std::string &iban) {
     auto it = nUscite.find(iban);
     if (it != nUscite.end()) {
-        std::cout << "numero uscite per il conto " << iban << ": " << it->second << "\n";
+        std::cout << "Numero uscite per il conto " << iban << ": " << it->second << "\n";
         return it->second;
     }
-    std::cerr << "Errore: IBAN " << iban << " non trovato per il numero di uscite.\n";
+    std::cerr << "Numero uscite non ottenibile: IBAN " << iban << " non trovato.\n";
     return 0;
 }
 
 int CC::getNentrate(const std::string &iban) {
     auto it = nEntrate.find(iban);
     if (it != nEntrate.end()) {
-        std::cout << "numero uscite per il conto " << iban << ": " << it->second << "\n";
+        std::cout << "Numero entrate per il conto " << iban << ": " << it->second << "\n";
         return it->second;
     }
-    std::cerr << "Errore: IBAN " << iban << " non trovato per il numero di uscite.\n";
+    std::cerr << "Numero entrate non ottenibile: IBAN " << iban << " non trovato.\n";
     return 0;
 }
 

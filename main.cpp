@@ -16,7 +16,7 @@ int main() {
     CC::bonificoEntrata("IT0987654321", 200);
     CC::bonificoUscita("ca",2);
 
-    CC::bonificoUscita("IT1234567890", 300);
+    CC::bonificoUscita("IT1234567890", 3300);
     CC::bonificoUscita("IT0987654321", 100);
     CC::bonificoUscita("IT1234567890",200);
 
