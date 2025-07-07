@@ -25,6 +25,7 @@ CC::CC(const std::string &iban, const Cliente &cliente, float saldo)
     nEntrate[Iban] = 0;
     nUscite[Iban] = 0;
 
+
 }
 
 void CC::searchIban(const std::string &iban) {
@@ -37,7 +38,6 @@ void CC::searchIban(const std::string &iban) {
                   << "Saldo: " << it->second.second << "\n"
                   << "\n";
     } else {
-        std::cout.flush();
         std::cerr << "Iban " << iban << " non trovato\n";
         std::cout << "\n";
     }
@@ -177,5 +177,12 @@ int CC::getNentrate(const std::string &iban) {
     return 0;
 }
 
+void CC::resetStaticState() {
+    ContoCorrente.clear();
+    fileEntrate.clear();
+    fileUscite.clear();
+    nEntrate.clear();
+    nUscite.clear();
+}
 
 

@@ -43,7 +43,10 @@ public:
 
     static int getNentrate(const std::string &iban);
 
-private:
+    static void resetStaticState();
+
+
+        private:
     std::string Iban;
     std::string Cognome;
     std::string Nome;
