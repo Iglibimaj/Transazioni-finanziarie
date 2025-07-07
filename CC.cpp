@@ -4,6 +4,9 @@
 std::map<std::string, std::pair<CC::ClientInfo, float>> CC::ContoCorrente;
 std::map<std::string, std::vector<float>> CC::fileEntrate;
 std::map<std::string, std::vector<float>> CC::fileUscite;
+std::map<std::string, int> CC::nEntrate;
+std::map<std::string, int> CC::nUscite;
+
 
 CC::CC(const std::string &iban, const Cliente &cliente, float saldo)
         : Iban(iban), Cognome(cliente.Cognome), Nome(cliente.Nome), CF(cliente.CF), Saldo(saldo) {
@@ -17,8 +20,11 @@ CC::CC(const std::string &iban, const Cliente &cliente, float saldo)
     }
     ClientInfo info = {Cognome, Nome, CF};
     ContoCorrente[Iban] = {info, Saldo};
-    fileEntrate[iban] = {};
-    fileUscite[iban] = {};
+    fileEntrate[Iban] = {};
+    fileUscite[Iban] = {};
+    nEntrate[Iban] = 0;
+    nUscite[Iban] = 0;
+
 }
 
 void CC::searchIban(const std::string &iban) {
@@ -29,10 +35,11 @@ void CC::searchIban(const std::string &iban) {
                   << "Nome: " << it->second.first.Nome << "\n"
                   << "CF: " << it->second.first.CF << "\n"
                   << "Saldo: " << it->second.second << "\n"
-                  <<"\n";
+                  << "\n";
     } else {
-        std::cout << "Iban "<<iban<<" non trovato\n";
-        std::cout<<"\n";
+        std::cout.flush();
+        std::cerr << "Iban " << iban << " non trovato\n";
+        std::cout << "\n";
     }
 }
 
@@ -45,13 +52,14 @@ void CC::bonificoEntrata(const std::string &iban, float valore) {
     if (it != ContoCorrente.end()) {
         auto &acc = it->second;
         acc.second += valore;
-        fileEntrate[iban].emplace_back( valore);
+        fileEntrate[iban].emplace_back(valore);
+        nEntrate[iban]++;
     } else {
-        std::cerr << "Bonifico non possibile: IBAN non trovato per bonifico in entrata.\n";
+        std::cerr << "Bonifico non possibile: IBAN " << iban << " non trovato per bonifico in entrata.\n";
     }
 }
 
-void CC::bonificoUscita(const std::string &iban,float valore) {
+void CC::bonificoUscita(const std::string &iban, float valore) {
     if (valore <= 0) {
         std::cerr << "Bonifico non possibile: il bonifico in uscita non può essere negativo o uguale a zero\n";
         return;
@@ -65,34 +73,35 @@ void CC::bonificoUscita(const std::string &iban,float valore) {
         }
         account.second -= valore;
         fileUscite[iban].emplace_back(valore);
+        nUscite[iban]++;
     } else {
-        std::cerr << "Bonifico non possibile: IBAN non trovato per bonifico in uscita.\n";
+        std::cerr << "Bonifico non possibile: IBAN " << iban << " non trovato per bonifico in uscita.\n";
     }
 }
 
-void CC::leggiEntrate(const std::string& iban) {
+void CC::leggiEntrate(const std::string &iban) {
     auto it = fileEntrate.find(iban);
     if (it != fileEntrate.end()) {
         std::cout << "Entrate per il conto " << iban << ":\n";
-        for (const auto& entrata : it->second) {
+        for (const auto &entrata: it->second) {
             std::cout << "Valore: " << entrata << " euro\n";
         }
         std::cout << "\n";
     } else {
-        std::cerr << "Errore: IBAN non trovato per leggere le entrate.\n";
+        std::cerr << "Errore: IBAN " << iban << " non trovato per leggere le entrate.\n";
     }
 }
 
-void CC::leggiUscite(const std::string& iban) {
+void CC::leggiUscite(const std::string &iban) {
     auto it = fileUscite.find(iban);
     if (it != fileUscite.end()) {
         std::cout << "Uscite per il conto " << iban << ":\n";
-        for (const auto& uscita : it->second) {
+        for (const auto &uscita: it->second) {
             std::cout << "Valore: " << uscita << " euro\n";
         }
         std::cout << "\n";
     } else {
-        std::cerr << "Errore: IBAN non trovato per leggere le uscite.\n";
+        std::cerr << "Errore: IBAN " << iban << " non trovato per leggere le uscite.\n";
     }
 }
 
@@ -102,14 +111,14 @@ void CC::saveinFile(const std::string &nomeFile) {
         std::cerr << "Errore nell'aprire il file.\n";
         return;
     }
-    for (const auto &it : ContoCorrente) {
+    for (const auto &it: ContoCorrente) {
         const auto &account = it.second;
         outFile << it.first << " " << account.first.Cognome << " "
                 << account.first.Nome << " " << account.first.CF << " "
                 << account.second << "\n";
     }
     std::cout << "Dati salvati correttamente nel file: " << nomeFile << "\n";
-    std::cout<<"\n";
+    std::cout << "\n";
 }
 
 void CC::readFile(const std::string &nomeFile) {
@@ -130,7 +139,7 @@ void CC::readFile(const std::string &nomeFile) {
         std::cout << "Dati caricati correttamente. Numero di conti: "
                   << ContoCorrente.size() << "\n";
     }
-    for (const auto &it : ContoCorrente) {
+    for (const auto &it: ContoCorrente) {
         const auto &account = it.second;
         std::cout << "Il conto " << it.first << " intesato al signor/a "
                   << account.first.Cognome << " " << account.first.Nome
@@ -138,4 +147,35 @@ void CC::readFile(const std::string &nomeFile) {
                   << " ha un saldo di " << account.second << " Euro\n";
     }
 }
+
+float CC::getSaldo(const std::string &iban) {
+    auto it = ContoCorrente.find(iban);
+    if (it != ContoCorrente.end()) {
+        return it->second.second;
+    }
+    std::cerr << "iban " << iban << " trovato";
+    return 0;
+}
+
+int CC::getNuscite(const std::string &iban) {
+    auto it = nUscite.find(iban);
+    if (it != nUscite.end()) {
+        std::cout << "numero uscite per il conto " << iban << ": " << it->second << "\n";
+        return it->second;
+    }
+    std::cerr << "Errore: IBAN " << iban << " non trovato per il numero di uscite.\n";
+    return 0;
+}
+
+int CC::getNentrate(const std::string &iban) {
+    auto it = nEntrate.find(iban);
+    if (it != nEntrate.end()) {
+        std::cout << "numero uscite per il conto " << iban << ": " << it->second << "\n";
+        return it->second;
+    }
+    std::cerr << "Errore: IBAN " << iban << " non trovato per il numero di uscite.\n";
+    return 0;
+}
+
+
 

@@ -1,0 +1,12 @@
+//
+// Created by bimaj on 06/07/2025.
+//
+
+#ifndef TRANSAZIONI_FINANZIARIE_TESTS_H
+#define TRANSAZIONI_FINANZIARIE_TESTS_H
+
+class Tests{
+
+};
+
+#endif //TRANSAZIONI_FINANZIARIE_TESTS_H
