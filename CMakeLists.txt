@@ -11,3 +11,23 @@ add_executable(Transazioni_finanziarie
         Client.h
         CC.h
 )
+
+# Add GoogleTest from the local path
+add_subdirectory(Tests/lib/googletest-main)
+include_directories(Tests/lib/googletest-main/googletest/include)
+
+# Test executable
+add_executable(Transazioni_finanziarie_tests
+        Client.cpp
+        CC.cpp
+        Client.h
+        CC.h
+        Tests/Tests.cpp
+        Tests/Tests.h
+)
+
+target_include_directories(Transazioni_finanziarie_tests PRIVATE "${CMAKE_SOURCE_DIR}")
+
+enable_testing()
+add_test(NAME Transazioni_finanziarie_tests COMMAND Transazioni_finanziarie_tests)
+target_link_libraries(Transazioni_finanziarie_tests gtest gtest_main pthread)
