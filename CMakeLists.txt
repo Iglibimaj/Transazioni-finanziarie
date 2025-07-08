@@ -3,7 +3,6 @@ project(Transazioni_finanziarie)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# Main project executable
 add_executable(Transazioni_finanziarie
         main.cpp
         Client.cpp
@@ -12,11 +11,9 @@ add_executable(Transazioni_finanziarie
         CC.h
 )
 
-# Add GoogleTest from the local path
 add_subdirectory(Tests/lib/googletest-main)
 include_directories(Tests/lib/googletest-main/googletest/include)
 
-# Test executable
 add_executable(Transazioni_finanziarie_tests
         Client.cpp
         CC.cpp

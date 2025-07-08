@@ -1,24 +1,21 @@
+#include <memory>
 #include "gtest/gtest.h"
 #include "Client.h"
 #include "CC.h"
 
 class TransazioniFinanziarieTest : public ::testing::Test {
 protected:
-    Cliente* cliente;
-    CC* cc;
-
-    TransazioniFinanziarieTest() : cliente(nullptr), cc(nullptr) {} // Initialize pointers to nullptr
+    std::unique_ptr<Cliente> cliente;
+    std::unique_ptr<CC> cc;
 
     void SetUp() override {
-
         CC::resetStaticState();
-        cliente = new Cliente("Bimaj", "Igli", "BMJGLI03D26D583G");
-        cc = new CC("123", *cliente, 0);
+        cliente = std::make_unique<Cliente>("Bimaj", "Igli", "BMJGLI03D26D583G");
+        cc = std::make_unique<CC>("123", *cliente, 0);
     }
 
     void TearDown() override {
-        delete cc;
-        delete cliente;
+
     }
 };
 
@@ -44,5 +41,10 @@ TEST_F(TransazioniFinanziarieTest, TestTransazioniMultiple) {
     EXPECT_EQ(CC::getNuscite("123"), 1) << "Il numero di uscite dovrebbe essere 1.";
 }
 
+TEST_F(TransazioniFinanziarieTest, TestBonificoEntrata) {
+    CC::bonificoEntrata("123", 100);
+    EXPECT_EQ(CC::getSaldo("123"), 100) << "Il saldo dovrebbe essere aggiornato a 100.";
+    EXPECT_EQ(CC::getNentrate("123"), 1) << "Il numero di entrate dovrebbe essere 1.";
+}
 
 

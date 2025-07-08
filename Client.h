@@ -5,7 +5,6 @@
 #ifndef TRANSAZIONI_FINANZIARIE_CLIENT_H
 #define TRANSAZIONI_FINANZIARIE_CLIENT_H
 
-
 class Cliente {
 public:
     std::string Cognome;
