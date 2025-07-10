@@ -45,6 +45,9 @@ public:
 
     static void resetStaticState();
 
+    const std::string& getIban(){
+        return Iban;
+    }
 
         private:
     std::string Iban;

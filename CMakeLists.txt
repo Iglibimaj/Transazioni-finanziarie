@@ -19,8 +19,8 @@ add_executable(Transazioni_finanziarie_tests
         CC.cpp
         Client.h
         CC.h
-        Tests/Tests.cpp
-        Tests/Tests.h
+        Tests/Client_Test.cpp
+        Tests/CC_Test.cpp
 )
 
 target_include_directories(Transazioni_finanziarie_tests PRIVATE "${CMAKE_SOURCE_DIR}")

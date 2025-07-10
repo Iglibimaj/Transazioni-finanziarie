@@ -1,7 +1,10 @@
-#include <memory>
+//
+// Created by bimaj on 08/07/2025.
+//
 #include "gtest/gtest.h"
-#include "Client.h"
 #include "CC.h"
+#include "Client.h"
+#include "sstream"
 
 class TransazioniFinanziarieTest : public ::testing::Test {
 protected:
@@ -14,9 +17,7 @@ protected:
         cc = std::make_unique<CC>("123", *cliente, 0);
     }
 
-    void TearDown() override {
 
-    }
 };
 
 TEST_F(TransazioniFinanziarieTest, TestSaldoIniziale) {
@@ -32,6 +33,13 @@ TEST_F(TransazioniFinanziarieTest, TestBonificoUscita) {
     EXPECT_EQ(CC::getNuscite("123"), 1) << "Il numero di uscite dovrebbe essere 1.";
 }
 
+
+TEST_F(TransazioniFinanziarieTest, TestBonificoEntrata) {
+    CC::bonificoEntrata("123", 100);
+    EXPECT_EQ(CC::getSaldo("123"), 100) << "Il saldo dovrebbe essere aggiornato a 100.";
+    EXPECT_EQ(CC::getNentrate("123"), 1) << "Il numero di entrate dovrebbe essere 1.";
+}
+
 TEST_F(TransazioniFinanziarieTest, TestTransazioniMultiple) {
     CC::bonificoEntrata("123", 100);
     CC::bonificoEntrata("123", 200);
@@ -41,10 +49,6 @@ TEST_F(TransazioniFinanziarieTest, TestTransazioniMultiple) {
     EXPECT_EQ(CC::getNuscite("123"), 1) << "Il numero di uscite dovrebbe essere 1.";
 }
 
-TEST_F(TransazioniFinanziarieTest, TestBonificoEntrata) {
-    CC::bonificoEntrata("123", 100);
-    EXPECT_EQ(CC::getSaldo("123"), 100) << "Il saldo dovrebbe essere aggiornato a 100.";
-    EXPECT_EQ(CC::getNentrate("123"), 1) << "Il numero di entrate dovrebbe essere 1.";
-}
+
 
 
