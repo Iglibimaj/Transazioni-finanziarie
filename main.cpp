@@ -1,34 +1,41 @@
-#include "CC.h"
-#include "Client.h"
+#include "Banca.h"
 
-int main() {
-    Cliente cliente1{"Rossi", "Mario", "RSSMRA80A01H501Z"};
-    Cliente cliente2{"Bianchi", "Luigi", "BNCGLG85B01H501Y"};
+int main(){
+    Cliente cliente("Bimaj","Igli","123");
+    Cliente cliente1("Giovanni","zero","gg");
 
-    CC conto1("IT1234567890", cliente1, 0);
-    CC conto2("IT0987654321", cliente2, 0);
+    CC conto(cliente,0);
+    CC conto1(cliente1,0);
 
-    CC::searchIban("IT1234567890");
-    CC::searchIban("IT0987654321");
-    CC::searchIban("sds");
+    Banca banca;
 
-    CC::bonificoEntrata("IT1234567890", 500);
-    CC::bonificoEntrata("IT0987654321", 200);
-    CC::bonificoUscita("ca",2);
+    banca.aggiungiConto("123",conto);
+    banca.aggiungiConto("12345",conto1);
 
-    CC::bonificoUscita("IT1234567890", 3300);
-    CC::bonificoUscita("IT0987654321", 100);
-    CC::bonificoUscita("IT1234567890",200);
+    Banca::displayCC("123");
 
-    CC::leggiEntrate("IT1234567890");
-    CC::leggiUscite("IT1234567890");
-    CC::leggiEntrate("IT0987654321");
-    CC::leggiUscite("IT0987654321");
+    Banca::searchIban("123").bonificoEntrata(400);
 
-    CC::getNuscite("IT1234567890");
+    Banca::searchIban("12345").bonificoEntrata(200);
 
-    CC::saveinFile("fileSave/fileSave.txt");
-    CC::readFile("fileSave/fileSave.txt");
+    Banca::searchIban("123").bonificoUscita(100);
 
-    return 0;
+    Banca::searchIban("123").bonificoUscita(200);
+
+    Banca::searchIban("12345").bonificoUscita(50);
+
+    Banca::searchIban("1234").bonificoEntrata(200);
+
+    Banca::searchIban("123").leggiEntrate();
+    Banca::searchIban("123").leggiUscite();
+
+    Banca::searchIban("12345").leggiEntrate();
+    Banca::searchIban("12345").leggiUscite();
+
+    Banca::displayCC("123");
+    Banca::displayCC("12345");
+
+    banca.saveinFile("saveFile/saveFile.txt");
+    banca.readFile("saveFile/saveFile.txt");
+
 }
